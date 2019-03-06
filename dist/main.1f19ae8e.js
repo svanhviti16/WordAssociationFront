@@ -120,7 +120,8 @@ var message = document.querySelector('#message');
 var feedback = document.querySelector('#feedback');
 var seconds = document.querySelector('#seconds');
 var skyldheitiDisplay = document.querySelector('#skyldheiti');
-var wordDict = {}; // Initialize Game
+var wordDict = {};
+var isValid; // Initialize Game
 
 function init() {
   // getting user score from local storage
@@ -136,14 +137,13 @@ function init() {
 
 
 function showWord(wordDict) {
-  fetch('http://localhost:3001/fletta').then(function (response) {
+  fetch('http://localhost:5042/skyldflettur').then(function (response) {
     return response.json();
   }).then(function (word) {
-    console.log("Frumfletta: " + word.fletta.frumfletta);
-    console.log("Skyldflettur: " + word.fletta.skyldflettur); //words.push([word.fletta.frumfletta, word.fletta.skyldflettur]);
-
-    wordDict["frum"] = word.fletta.frumfletta;
-    wordDict["skyld"] = word.fletta.skyldflettur;
+    console.log("Frumfletta: " + word.frumfletta);
+    console.log("Skyldflettur: " + word.skyldflettur);
+    wordDict["frum"] = word.frumfletta;
+    wordDict["skyld"] = word.skyldflettur;
     currentWord.innerHTML = wordDict.frum;
     return wordDict;
   }).catch(function (err) {
@@ -154,37 +154,43 @@ function showWord(wordDict) {
 function matchWords(wordDict) {
   wordInput.addEventListener('keypress', function (e) {
     if (e.key === 'Enter') {
-      console.log(wordInput.value); // word sanity check (lookup in BÍN?)
-      // save input to db
-      // check if input matches an item in the skyldflettur array
-      //displaySkyldheiti();
+      console.log(wordInput.value);
 
-      console.log(wordDict);
-      var timeOut = 600;
-
-      if (wordDict.skyld.includes(wordInput.value)) {
-        console.log("passar");
-        wordInput.value = '';
-        score++;
-        scoreStorage.setItem("userScore", score);
-        score = scoreStorage.getItem("userScore");
-        feedback.innerHTML = "Já, þetta er á skrá hjá okkur!"; // time delay to display text
-
-        setTimeout(function () {
-          feedback.innerHTML = "";
-          window.location.reload(true);
-        }, timeOut);
-        return true;
-      } else {
-        wordInput.value = '';
-        feedback.innerHTML = 'Áhugavert orð, en ekki skráð skyldheiti'; // time delay to display text
-
-        setTimeout(function () {
-          feedback.innerHTML = "";
-          window.location.reload(true);
-        }, timeOut);
-        return false;
+      if (!wordInput.value) {
+        return;
       }
+
+      fetch("http://localhost:5042/user_word/".concat(wordInput.value)).then(function (response) {
+        return response.json();
+      }).then(function (result) {
+        isValid = result.is_valid;
+        console.log(isValid);
+        return isValid;
+      }).then(function (isValid) {
+        console.log(wordDict);
+        var timeOut = 1000;
+
+        if (wordDict.skyld.includes(wordInput.value)) {
+          wordInput.value = '';
+          score++;
+          scoreStorage.setItem("userScore", score);
+          score = scoreStorage.getItem("userScore");
+          feedback.innerHTML = "Já, þetta er á skrá hjá okkur!";
+        } else if (isValid) {
+          console.log(isValid + " " + wordInput.value);
+          wordInput.value = '';
+          feedback.innerHTML = 'Áhugavert orð, en ekki skráð skyldheiti'; // time delay to display text      
+        } else {
+          console.log(isValid + " " + wordInput.value);
+          wordInput.value = '';
+          feedback.innerHTML = "Þetta er nú eitthvað skrýtið orð.";
+        }
+
+        setTimeout(function () {
+          feedback.innerHTML = "";
+          window.location.reload(true);
+        }, timeOut);
+      });
     }
   });
 }
@@ -219,7 +225,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "58272" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "58324" + '/');
 
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
