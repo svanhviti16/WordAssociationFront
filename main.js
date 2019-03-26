@@ -10,6 +10,7 @@ scoreStorage = window.localStorage;
 const wordInput = document.querySelector('#word-input')
 const currentWord = document.querySelector('#current-word')
 const scoreDisplay = document.querySelector('#score')
+const scoreText = document.querySelector('#scoreText')
 const timeDisplay = document.querySelector('#time')
 const message = document.querySelector('#message')
 const feedback = document.querySelector('#feedback')
@@ -22,8 +23,12 @@ var isValid;
 function init() {
   // getting user score from local storage
   score = scoreStorage.getItem("userScore");
-  scoreDisplay.innerHTML = score;
-  console.log("in init")
+  if (score >= 1) {
+      scoreDisplay.innerHTML = score;
+  }
+  else {
+      scoreDisplay.innerHTML = "0";
+  }
   // display random word
   showWord(wordDict);
   // check typed words - waiting for user to press enter
@@ -58,7 +63,9 @@ function matchWords(wordDict) {
       if (!wordInput.value) {
         return;
       }
-      fetch(`http://localhost:5042/user_word/${wordInput.value}`)
+      console.log(wordDict)
+
+      fetch(`http://localhost:5042/userword/${wordInput.value}+${wordDict.frum}`)
       .then(function(response) {
         return response.json();
       })
@@ -68,26 +75,28 @@ function matchWords(wordDict) {
         return isValid;
       })
       .then(isValid => {
-        console.log(wordDict)
         var timeOut = 1000;
         if (wordDict.skyld.includes(wordInput.value)) {
           wordInput.value = '';
           score++;
           scoreStorage.setItem("userScore", score);
           score = scoreStorage.getItem("userScore");
-          feedback.innerHTML = "Já, þetta er á skrá hjá okkur!"; 
+          feedback.className="green-text";
+          feedback.innerHTML = "Já, þetta er á skrá sem skyldheiti!";
         }
 
         else if (isValid) {
           console.log(isValid + " " + wordInput.value)
           wordInput.value = '';
+          feedback.className="blue-text";
           feedback.innerHTML = 'Áhugavert orð, en ekki skráð skyldheiti';
-          // time delay to display text      
         }
 
+        // TODO: multi-word inputs
         else {
           console.log(isValid + " " + wordInput.value)
           wordInput.value = '';
+          feedback.className="red-text";
           feedback.innerHTML = "Þetta er nú eitthvað skrýtið orð."
         }
 

@@ -1,3 +1,7 @@
+body {
+    font-family: 'Roboto', sans-serif;
+}
+
 #current-word {
     height: 100px;
 }
@@ -6,5 +10,23 @@
 #feedback {
     line-height: 90px;
     text-align: center;
-    height: 100px;
+    height: 70px;
+}
+
+.green-text {
+    color: green;
+}
+
+.blue-text {
+    color: blue;
+}
+
+.red-text {
+    color: red;
+}
+
+.logo { background: url("logo.65d82b16.svg") no-repeat; }
+
+img {
+    height: 250px;
 }

@@ -115,6 +115,7 @@ scoreStorage = window.localStorage; // DOM elements
 var wordInput = document.querySelector('#word-input');
 var currentWord = document.querySelector('#current-word');
 var scoreDisplay = document.querySelector('#score');
+var scoreText = document.querySelector('#scoreText');
 var timeDisplay = document.querySelector('#time');
 var message = document.querySelector('#message');
 var feedback = document.querySelector('#feedback');
@@ -126,8 +127,13 @@ var isValid; // Initialize Game
 function init() {
   // getting user score from local storage
   score = scoreStorage.getItem("userScore");
-  scoreDisplay.innerHTML = score;
-  console.log("in init"); // display random word
+
+  if (score >= 1) {
+    scoreDisplay.innerHTML = score;
+  } else {
+    scoreDisplay.innerHTML = "0";
+  } // display random word
+
 
   showWord(wordDict); // check typed words - waiting for user to press enter
 
@@ -160,14 +166,14 @@ function matchWords(wordDict) {
         return;
       }
 
-      fetch("http://localhost:5042/user_word/".concat(wordInput.value)).then(function (response) {
+      console.log(wordDict);
+      fetch("http://localhost:5042/userword/".concat(wordInput.value, "+").concat(wordDict.frum)).then(function (response) {
         return response.json();
       }).then(function (result) {
         isValid = result.is_valid;
         console.log(isValid);
         return isValid;
       }).then(function (isValid) {
-        console.log(wordDict);
         var timeOut = 1000;
 
         if (wordDict.skyld.includes(wordInput.value)) {
@@ -175,16 +181,20 @@ function matchWords(wordDict) {
           score++;
           scoreStorage.setItem("userScore", score);
           score = scoreStorage.getItem("userScore");
-          feedback.innerHTML = "Já, þetta er á skrá hjá okkur!";
+          feedback.className = "green-text";
+          feedback.innerHTML = "Já, þetta er á skrá sem skyldheiti!";
         } else if (isValid) {
           console.log(isValid + " " + wordInput.value);
           wordInput.value = '';
-          feedback.innerHTML = 'Áhugavert orð, en ekki skráð skyldheiti'; // time delay to display text      
-        } else {
-          console.log(isValid + " " + wordInput.value);
-          wordInput.value = '';
-          feedback.innerHTML = "Þetta er nú eitthvað skrýtið orð.";
-        }
+          feedback.className = "blue-text";
+          feedback.innerHTML = 'Áhugavert orð, en ekki skráð skyldheiti';
+        } // TODO: multi-word inputs
+        else {
+            console.log(isValid + " " + wordInput.value);
+            wordInput.value = '';
+            feedback.className = "red-text";
+            feedback.innerHTML = "Þetta er nú eitthvað skrýtið orð.";
+          }
 
         setTimeout(function () {
           feedback.innerHTML = "";
@@ -225,7 +235,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "58324" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "56879" + '/');
 
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
