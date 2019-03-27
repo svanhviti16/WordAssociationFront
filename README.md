@@ -1,6 +1,6 @@
 # Orðavensl
 
-Framendi orðavenslatölvuleiks sem notar gögn úr [Íslensku orðaneti](http://ordanet.is). Bakendinn er á https://github.com/svanhviti16/WordAssociation.
+Framendi orðavenslatölvuleiks í námskeiðinu Málleg gagnasöfn í Háskóla Íslands vorönn 2019. Leikurinn notar gögn úr [Íslensku orðaneti](http://ordanet.is). Bakendinn er á https://github.com/svanhviti16/WordAssociation.
 
 Til að keyra framendann þarf að setja upp [Parcel](https://parceljs.org/): 
 
