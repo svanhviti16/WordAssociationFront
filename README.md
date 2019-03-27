@@ -6,7 +6,7 @@ Til að keyra framendann þarf að setja upp [Parcel](https://parceljs.org/):
 
 ```npm install -g parcel-bundler```
 
-Keyra þarf upp [bakendann](https://github.com/svanhviti16/WordAssociation) til að hafa aðgang að orðagögnunum. 
+Ræsa þarf [bakendann](https://github.com/svanhviti16/WordAssociation) til að hafa aðgang að orðagögnunum. 
 Þegar hann er kominn í gang er vefþjónninn ræstur með skipuninni 
 
 ```parcel index.html```
