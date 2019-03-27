@@ -148,8 +148,11 @@ function showWord(wordDict) {
   }).then(function (word) {
     console.log("Frumfletta: " + word.frumfletta);
     console.log("Skyldflettur: " + word.skyldflettur);
+    console.log("Count: " + word.notendaord);
     wordDict["frum"] = word.frumfletta;
     wordDict["skyld"] = word.skyldflettur;
+    wordDict["userdata"] = word.notendaord;
+    console.log(word.notendaord);
     currentWord.innerHTML = wordDict.frum;
     return wordDict;
   }).catch(function (err) {
@@ -174,7 +177,7 @@ function matchWords(wordDict) {
         console.log(isValid);
         return isValid;
       }).then(function (isValid) {
-        var timeOut = 1000;
+        var timeOut = 1400;
 
         if (wordDict.skyld.includes(wordInput.value)) {
           wordInput.value = '';
@@ -183,11 +186,13 @@ function matchWords(wordDict) {
           score = scoreStorage.getItem("userScore");
           feedback.className = "green-text";
           feedback.innerHTML = "Já, þetta er á skrá sem skyldheiti!";
+        } else if (wordDict.userdata[wordInput.value]) {
+          feedback.innerHTML = "".concat(wordDict.userdata[wordInput.value], " a\xF0rir hafa skrifa\xF0 \xFEetta or\xF0!");
         } else if (isValid) {
           console.log(isValid + " " + wordInput.value);
           wordInput.value = '';
           feedback.className = "blue-text";
-          feedback.innerHTML = 'Áhugavert orð, en ekki skráð skyldheiti';
+          feedback.innerHTML = 'Áhugavert orð, við skráum það niður';
         } // TODO: multi-word inputs
         else {
             console.log(isValid + " " + wordInput.value);
@@ -235,7 +240,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "56879" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50978" + '/');
 
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);

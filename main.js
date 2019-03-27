@@ -46,8 +46,12 @@ function showWord(wordDict) {
   .then(word => {
     console.log("Frumfletta: " + word.frumfletta);
     console.log("Skyldflettur: " + word.skyldflettur);
+    console.log("Count: " + word.notendaord)
     wordDict["frum"] = word.frumfletta;
     wordDict["skyld"] = word.skyldflettur;
+    wordDict["userdata"] = word.notendaord;
+    console.log(word.notendaord)
+
     currentWord.innerHTML = wordDict.frum;
     return wordDict;
   }).catch(err => {
@@ -75,7 +79,7 @@ function matchWords(wordDict) {
         return isValid;
       })
       .then(isValid => {
-        var timeOut = 1000;
+        var timeOut = 1400;
         if (wordDict.skyld.includes(wordInput.value)) {
           wordInput.value = '';
           score++;
@@ -85,11 +89,14 @@ function matchWords(wordDict) {
           feedback.innerHTML = "Já, þetta er á skrá sem skyldheiti!";
         }
 
+        else if (wordDict.userdata[wordInput.value]) {
+          feedback.innerHTML = `${wordDict.userdata[wordInput.value]} aðrir hafa skrifað þetta orð!`;
+        }
         else if (isValid) {
           console.log(isValid + " " + wordInput.value)
           wordInput.value = '';
           feedback.className="blue-text";
-          feedback.innerHTML = 'Áhugavert orð, en ekki skráð skyldheiti';
+          feedback.innerHTML = 'Áhugavert orð, við skráum það niður';
         }
 
         // TODO: multi-word inputs

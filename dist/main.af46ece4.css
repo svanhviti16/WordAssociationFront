@@ -1,11 +1,11 @@
 body {
     font-family: 'Roboto', sans-serif;
+    background-color: #C3DDD7;
 }
 
 #current-word {
     height: 100px;
 }
-
 
 #feedback {
     line-height: 90px;
