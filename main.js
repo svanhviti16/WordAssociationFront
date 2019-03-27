@@ -1,3 +1,5 @@
+// Basic game structure based on Brad Traversy's speed-typing game tutorial: https://www.youtube.com/watch?v=Yw-SYSG-028
+
 window.addEventListener('load', init);
 
 // Global scope variables
@@ -33,7 +35,6 @@ function init() {
   showWord(wordDict);
   // check typed words - waiting for user to press enter
   matchWords(wordDict);
-
 }
 
 // match word to skyldheiti
@@ -44,13 +45,10 @@ function showWord(wordDict) {
     return response.json();
   })
   .then(word => {
-    console.log("Frumfletta: " + word.frumfletta);
-    console.log("Skyldflettur: " + word.skyldflettur);
-    console.log("Count: " + word.notendaord)
     wordDict["frum"] = word.frumfletta;
     wordDict["skyld"] = word.skyldflettur;
+    // contains the count
     wordDict["userdata"] = word.notendaord;
-    console.log(word.notendaord)
 
     currentWord.innerHTML = wordDict.frum;
     return wordDict;
@@ -59,15 +57,14 @@ function showWord(wordDict) {
   });
 }
 
-
 function matchWords(wordDict) {
   wordInput.addEventListener('keypress', function (e) {
     if (e.key === 'Enter') {
-      console.log(wordInput.value);
       if (!wordInput.value) {
         return;
       }
-      console.log(wordDict)
+      //for cheating:
+      //console.log(wordDict)
 
       fetch(`http://localhost:5042/userword/${wordInput.value}+${wordDict.frum}`)
       .then(function(response) {
@@ -75,7 +72,6 @@ function matchWords(wordDict) {
       })
       .then(result => {
         isValid = result.is_valid;
-        console.log(isValid);
         return isValid;
       })
       .then(isValid => {
@@ -90,18 +86,22 @@ function matchWords(wordDict) {
         }
 
         else if (wordDict.userdata[wordInput.value]) {
-          feedback.innerHTML = `${wordDict.userdata[wordInput.value]} aðrir hafa skrifað þetta orð!`;
+          feedback.className="purple-text";
+          if (wordDict.userdata[wordInput.value] == 1) {
+            feedback.innerHTML = `${wordDict.userdata[wordInput.value]} annar hefur skrifað þetta orð!`;
+          }
+          else {
+            feedback.innerHTML = `${wordDict.userdata[wordInput.value]} aðrir hafa skrifað þetta orð!`;
+          }
         }
         else if (isValid) {
-          console.log(isValid + " " + wordInput.value)
           wordInput.value = '';
           feedback.className="blue-text";
           feedback.innerHTML = 'Áhugavert orð, við skráum það niður';
         }
 
-        // TODO: multi-word inputs
+        // TODO someday: multi-word inputs not in skyldheiti
         else {
-          console.log(isValid + " " + wordInput.value)
           wordInput.value = '';
           feedback.className="red-text";
           feedback.innerHTML = "Þetta er nú eitthvað skrýtið orð."
@@ -115,8 +115,6 @@ function matchWords(wordDict) {
     }
   })
 }
-
-
 
 function displaySkyldheiti() {
   return skyldheitiDisplay.innerHTML = wordDict.skyld;

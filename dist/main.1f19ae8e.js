@@ -105,6 +105,7 @@ parcelRequire = (function (modules, cache, entry, globalName) {
   // Override the current require with this new one
   return newRequire;
 })({"main.js":[function(require,module,exports) {
+// Basic game structure based on Brad Traversy's speed-typing game tutorial: https://www.youtube.com/watch?v=Yw-SYSG-028
 window.addEventListener('load', init); // Global scope variables
 
 var time = 10;
@@ -146,13 +147,10 @@ function showWord(wordDict) {
   fetch('http://localhost:5042/skyldflettur').then(function (response) {
     return response.json();
   }).then(function (word) {
-    console.log("Frumfletta: " + word.frumfletta);
-    console.log("Skyldflettur: " + word.skyldflettur);
-    console.log("Count: " + word.notendaord);
     wordDict["frum"] = word.frumfletta;
-    wordDict["skyld"] = word.skyldflettur;
+    wordDict["skyld"] = word.skyldflettur; // contains the count
+
     wordDict["userdata"] = word.notendaord;
-    console.log(word.notendaord);
     currentWord.innerHTML = wordDict.frum;
     return wordDict;
   }).catch(function (err) {
@@ -163,18 +161,16 @@ function showWord(wordDict) {
 function matchWords(wordDict) {
   wordInput.addEventListener('keypress', function (e) {
     if (e.key === 'Enter') {
-      console.log(wordInput.value);
-
       if (!wordInput.value) {
         return;
-      }
+      } //for cheating:
+      //console.log(wordDict)
 
-      console.log(wordDict);
+
       fetch("http://localhost:5042/userword/".concat(wordInput.value, "+").concat(wordDict.frum)).then(function (response) {
         return response.json();
       }).then(function (result) {
         isValid = result.is_valid;
-        console.log(isValid);
         return isValid;
       }).then(function (isValid) {
         var timeOut = 1400;
@@ -187,15 +183,19 @@ function matchWords(wordDict) {
           feedback.className = "green-text";
           feedback.innerHTML = "Já, þetta er á skrá sem skyldheiti!";
         } else if (wordDict.userdata[wordInput.value]) {
-          feedback.innerHTML = "".concat(wordDict.userdata[wordInput.value], " a\xF0rir hafa skrifa\xF0 \xFEetta or\xF0!");
+          feedback.className = "purple-text";
+
+          if (wordDict.userdata[wordInput.value] == 1) {
+            feedback.innerHTML = "".concat(wordDict.userdata[wordInput.value], " annar hefur skrifa\xF0 \xFEetta or\xF0!");
+          } else {
+            feedback.innerHTML = "".concat(wordDict.userdata[wordInput.value], " a\xF0rir hafa skrifa\xF0 \xFEetta or\xF0!");
+          }
         } else if (isValid) {
-          console.log(isValid + " " + wordInput.value);
           wordInput.value = '';
           feedback.className = "blue-text";
           feedback.innerHTML = 'Áhugavert orð, við skráum það niður';
-        } // TODO: multi-word inputs
+        } // TODO someday: multi-word inputs not in skyldheiti
         else {
-            console.log(isValid + " " + wordInput.value);
             wordInput.value = '';
             feedback.className = "red-text";
             feedback.innerHTML = "Þetta er nú eitthvað skrýtið orð.";
