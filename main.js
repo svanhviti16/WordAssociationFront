@@ -3,7 +3,6 @@
 window.addEventListener('load', init);
 
 // Global scope variables
-let time = 10;
 let score = 0;
 let isPlaying;
 scoreStorage = window.localStorage;
@@ -75,7 +74,7 @@ function matchWords(wordDict) {
         return isValid;
       })
       .then(isValid => {
-        var timeOut = 1400;
+        var timeOut = 1500;
         if (wordDict.skyld.includes(wordInput.value)) {
           wordInput.value = '';
           score++;

@@ -108,7 +108,6 @@ parcelRequire = (function (modules, cache, entry, globalName) {
 // Basic game structure based on Brad Traversy's speed-typing game tutorial: https://www.youtube.com/watch?v=Yw-SYSG-028
 window.addEventListener('load', init); // Global scope variables
 
-var time = 10;
 var score = 0;
 var isPlaying;
 scoreStorage = window.localStorage; // DOM elements
@@ -173,7 +172,7 @@ function matchWords(wordDict) {
         isValid = result.is_valid;
         return isValid;
       }).then(function (isValid) {
-        var timeOut = 1400;
+        var timeOut = 1500;
 
         if (wordDict.skyld.includes(wordInput.value)) {
           wordInput.value = '';
@@ -240,7 +239,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50978" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "54145" + '/');
 
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
